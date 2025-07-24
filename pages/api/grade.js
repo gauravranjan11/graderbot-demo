@@ -6,7 +6,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration)
 
-function buildPrompt(website) {
+function buildPrompt(website: string): string {
   return `You are an AI assistant grading restaurant websites focused on Indian and Goan restaurants.
   Analyze the website content at this URL: ${website}.
   Grade it from A+ to F on mobile-friendliness, menu clarity, SEO basics, and user experience.
@@ -14,10 +14,12 @@ function buildPrompt(website) {
 }
 
 export default async function handler(req, res) {
+  // Allow CORS for all origins
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
+  // Handle preflight OPTIONS
   if (req.method === 'OPTIONS') {
     return res.status(200).end()
   }
