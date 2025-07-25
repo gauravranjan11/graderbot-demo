@@ -1,6 +1,18 @@
 {
   "version": 2,
-
+  "functions": {
+    "api/grade.js": {
+      "runtime": "nodejs20.x"
+      // It's good practice to use a current LTS like nodejs20.x or nodejs22.x
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/grade",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "api/grade.js"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
