@@ -2,72 +2,69 @@ import { Configuration, OpenAIApi } from 'openai'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+apiKey: process.env.OPENAI_API_KEY,
 })
 
 const openai = new OpenAIApi(configuration)
 
 function buildPrompt(website: string) {
-  return `You are an AI assistant grading restaurant websites focused on Indian and Goan restaurants.
-  Analyze the website content at this URL: ${website}.
-  Grade it from A+ to F on mobile-friendliness, menu clarity, SEO basics, and user experience.
-  Provide a short summary and 3 actionable suggestions for improvement.`
+return You are an AI assistant grading restaurant websites focused on Indian and Goan restaurants. Analyze the website content at this URL: ${website}. Grade it from A+ to F on mobile-friendliness, menu clarity, SEO basics, and user experience. Provide a short summary and 3 actionable suggestions for improvement.
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Handle CORS preflight request
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-    return res.status(200).end()
-  }
+// Allow CORS for both OPTIONS and POST
+res.setHeader('Access-Control-Allow-Origin', '*')
+res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
-  // Allow CORS for POST too
-  res.setHeader('Access-Control-Allow-Origin', '*')
+if (req.method === 'OPTIONS') {
+return res.status(200).end() // CORS preflight
+}
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
+if (req.method !== 'POST') {
+return res.status(405).json({ error: 'Method not allowed' })
+}
 
-  const { website, email } = req.body
+const { website, email } = req.body
 
-  if (!website || !email) {
-    return res.status(400).json({ error: 'Missing website or email' })
-  }
+if (!website || !email) {
+return res.status(400).json({ error: 'Missing website or email' })
+}
 
-  try {
-    const prompt = buildPrompt(website)
+try {
+const prompt = buildPrompt(website)
 
-    const completion = await openai.createChatCompletion({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500,
-    })
+pgsql
+Copy
+Edit
+const completion = await openai.createChatCompletion({
+  model: 'gpt-4o-mini',
+  messages: [{ role: 'user', content: prompt }],
+  max_tokens: 500,
+})
 
-    const content = completion.data.choices[0].message?.content || ''
+const content = completion.data.choices[0].message?.content || ''
+const lines = content.split('\n').map(line => line.trim()).filter(Boolean)
 
-    const lines = content.split('\n').map(line => line.trim()).filter(Boolean)
-    let grade = 'N/A'
-    let summary = ''
-    let suggestions: string[] = []
+let grade = 'N/A'
+let summary = ''
+let suggestions: string[] = []
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]
-      if (line.match(/^Grade:/i)) {
-        grade = line.replace(/^Grade:/i, '').trim()
-      } else if (line.match(/^Summary:/i)) {
-        summary = line.replace(/^Summary:/i, '').trim()
-      } else if (line.match(/^Suggestions?:/i)) {
-        suggestions = lines.slice(i + 1).map(l => l.replace(/^[0-9]+\.\s*/, '').trim())
-        break
-      }
-    }
-
-    return res.status(200).json({ grade, summary, suggestions })
-  } catch (err) {
-    console.error(err)
-    return res.status(500).json({ error: 'Failed to generate grade' })
+for (let i = 0; i < lines.length; i++) {
+  const line = lines[i]
+  if (line.match(/^Grade:/i)) {
+    grade = line.replace(/^Grade:/i, '').trim()
+  } else if (line.match(/^Summary:/i)) {
+    summary = line.replace(/^Summary:/i, '').trim()
+  } else if (line.match(/^Suggestions?:/i)) {
+    suggestions = lines.slice(i + 1).map(l => l.replace(/^[0-9]+\.\s*/, '').trim())
+    break
   }
 }
 
+return res.status(200).json({ grade, summary, suggestions })
+} catch (err) {
+console.error(err)
+return res.status(500).json({ error: 'Failed to generate grade' })
+}
+}
