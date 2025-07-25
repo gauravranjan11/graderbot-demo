@@ -1,27 +1,25 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "./api/grade.js",
-      "use": "@vercel/node"
-    }
-  ],
-
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        {
+  "version": 2, // <--- Comma here, because "functions" comes next
+  "functions": { // <--- Start of "functions" object
+    "api/grade.js": { // <--- Key for your function file
+      "runtime": "nodejs20.x" // <--- NO comma here, because this is the LAST key-value pair in this inner object
+    } // <--- End of inner object for api/grade.js
+  }, // <--- Comma here, because "headers" comes next
+  "headers": [ // <--- Start of "headers" array
+    { // <--- Start of first header object
+      "source": "/(.*)", // <--- Comma here
+      "headers": [ // <--- Start of inner headers array
+        { "key": "Access-Control-Allow-Credentials", "value": "true" }, // <--- Comma here
+        { "key": "Access-Control-Allow-Origin", "value": "*" }, // <--- Comma here
+        { // <--- Comma here (as there are more header objects after this one)
           "key": "Access-Control-Allow-Methods",
           "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
         },
-        {
+        { // <--- NO comma here, because this is the LAST header object in the array
           "key": "Access-Control-Allow-Headers",
           "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
         }
-      ]
-    }
-  ]
-}
+      ] // <--- End of inner headers array
+    } // <--- NO comma here, because this is the LAST element in the "headers" array
+  ] // <--- End of "headers" array
+} // <--- End of the main configuration object
