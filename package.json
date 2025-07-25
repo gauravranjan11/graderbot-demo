@@ -1,25 +1,24 @@
 {
   "name": "graderbot-demo",
   "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "13.4.4",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "@google/genai": "^1.11.0" // Recommended and latest Google Gen AI SDK
-    // If you still have "openai", remove it.
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-next": "13.4.4"
-  },
-  "engines": {
-    "node": ">=18.18.0"
-  }
-}
+  "private": true,  <-- COMMA here, because "scripts" comes next
+  "scripts": {      <-- Start of "scripts" object
+    "dev": "next dev",     <-- COMMA here
+    "build": "next build", <-- COMMA here
+    "start": "next start", <-- COMMA here
+    "lint": "next lint"    <-- NO COMMA here, because this is the LAST property in "scripts"
+  },                <-- COMMA here, because "dependencies" comes next
+  "dependencies": { <-- Start of "dependencies" object
+    "next": "13.4.4",      <-- COMMA here
+    "react": "18.2.0",     <-- COMMA here
+    "react-dom": "18.2.0", <-- COMMA here
+    "@google/genai": "^1.11.0" <-- NO COMMA here, because this is the LAST property in "dependencies"
+  },                <-- COMMA here, because "devDependencies" comes next
+  "devDependencies": { <-- Start of "devDependencies" object
+    "eslint": "^8.57.0",           <-- COMMA here
+    "eslint-config-next": "13.4.4" <-- NO COMMA here, because this is the LAST property in "devDependencies"
+  },                <-- COMMA here, because "engines" comes next
+  "engines": {      <-- Start of "engines" object
+    "node": ">=18.18.0" <-- NO COMMA here, because this is the LAST property in "engines"
+  }                 <-- End of "engines" object
+}                   <-- End of the main object
