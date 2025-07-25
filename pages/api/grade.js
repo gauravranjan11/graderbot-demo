@@ -1,23 +1,23 @@
-// pages/api/grade.js (after moving to the correct directory)
+// pages/api/grade.js
 
-// 1. Correct import for OpenAI v4
-const OpenAI = require('openai'); // Notice the Capital 'O' and no 'Configuration' or 'OpenAIApi'
+// 1. Import the Gemini SDK
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// 2. Initialize the client directly
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Ensure this environment variable is set in Vercel
-});
+// 2. Initialize the Gemini client
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Choose your Gemini model (e.g., 'gemini-pro', 'gemini-1.5-flash', 'gemini-1.5-pro')
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-// Your existing buildPrompt function (assuming it's correct)
+
 function buildPrompt(website) {
+  // Your prompt remains similar, as it's just text for the model
   return `Grade the following website: ${website}. Provide a grade (A, B, C, D, F), a brief summary of its strengths and weaknesses, and 3 actionable suggestions for improvement.`;
 }
 
-// Your API route handler
 module.exports = async function handler(req, res) {
-  // CORS Preflight Handling (if needed, otherwise rely on vercel.json)
+  // CORS Preflight Handling (if needed, or rely on vercel.json)
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Or your specific frontend domain
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();
@@ -44,17 +44,12 @@ module.exports = async function handler(req, res) {
   try {
     const prompt = buildPrompt(website);
 
-    // 3. Correct API call for OpenAI v4 (chat completions)
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Or 'gpt-3.5-turbo', 'gpt-4', etc.
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500, // Limit the response length
-    });
+    // 3. Make the Gemini API call
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const gradeResponse = response.text(); // Get the generated text
 
-    // 4. Correct way to access content in OpenAI v4
-    const gradeResponse = completion.choices[0].message?.content || 'No content generated.';
-
-    // Assuming you want to parse the response into structured data
+    // 4. Parse the response (similar to your OpenAI parsing)
     const lines = gradeResponse.split('\n').filter(line => line.trim() !== '');
     const grade = lines[0] || 'N/A';
     const summaryIndex = lines.findIndex(line => line.toLowerCase().includes('summary'));
@@ -81,8 +76,8 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('OpenAI API Error:', error);
-    // You might want to differentiate between API errors and other errors
-    res.status(500).json({ error: 'Failed to process request due to an internal server error.' });
+    console.error('Gemini API Error:', error);
+    // You can check error.response.status for specific HTTP codes
+    res.status(500).json({ error: 'Failed to process request with Gemini.' });
   }
 };

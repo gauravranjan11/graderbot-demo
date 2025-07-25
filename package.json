@@ -1,15 +1,25 @@
 {
   "name": "graderbot-demo",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "openai": "^4.7.0"
+    "@google/genai": "^1.11.0" // Recommended and latest Google Gen AI SDK
+    // If you still have "openai", remove it.
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "13.4.4"
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
 }
