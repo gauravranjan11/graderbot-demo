@@ -1,3 +1,16 @@
 {
-  "version": 2
+  "version": 2,
+  "functions": {
+    "api/grade.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/grade",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "api/grade.js"
+    }
+  ]
 }
+
