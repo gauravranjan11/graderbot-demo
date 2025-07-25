@@ -3,7 +3,7 @@
   "routes": [
     {
       "src": "/api/grade",
-      "methods": ["POST", "OPTIONS"],
+      "methods": ["POST", "OPTIONS","GET"],
       "dest": "api/grade.js"
     }
   ],
