@@ -2,7 +2,8 @@
   "version": 2,
   "functions": {
     "api/grade.js": {
-      "runtime": "nodejs@18.x"
+      "runtime": "@vercel/node@20.x"
+      // Or "@vercel/node@22.x"
     }
   },
   "routes": [
@@ -13,4 +14,3 @@
     }
   ]
 }
-
