@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from 'openai'
+const { Configuration, OpenAIApi } = require('openai')
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,8 +13,7 @@ Grade it from A+ to F on mobile-friendliness, menu clarity, SEO basics, and user
 Provide a short summary and 3 actionable suggestions for improvement.`
 }
 
-export default async function handler(req, res) {
-  // CORS preflight
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -22,7 +21,6 @@ export default async function handler(req, res) {
     return res.status(200).end()
   }
 
-  // Allow CORS
   res.setHeader('Access-Control-Allow-Origin', '*')
 
   if (req.method !== 'POST') {
@@ -45,7 +43,7 @@ export default async function handler(req, res) {
     })
 
     const content = completion.data.choices[0].message?.content || ''
-    const lines = content.split('\n').map(l => l.trim()).filter(Boolean)
+    const lines = content.split('\n').map(line => line.trim()).filter(Boolean)
 
     let grade = 'N/A'
     let summary = ''
